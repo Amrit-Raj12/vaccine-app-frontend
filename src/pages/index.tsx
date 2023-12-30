@@ -7,6 +7,11 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
 
   const availableDates: Date[] = [
+    new Date(2023, 11, 23),
+    new Date(2023, 11, 24),
+    new Date(2023, 11, 25),
+    new Date(2023, 11, 26),
+    new Date(2023, 11, 27),
     new Date(2023, 11, 28),
     new Date(2023, 11, 30),
     new Date(2023, 11, 31),
@@ -21,7 +26,6 @@ export default function Home() {
 
   return (
     <main
-      // className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
     >
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="container mx-auto">

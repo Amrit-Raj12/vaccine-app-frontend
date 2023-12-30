@@ -14,6 +14,20 @@ interface CalendarProps {
   events: Event[];
 }
 
+const eventStyleGetter = (event: Event) => {
+  const backgroundColor = event.title === 'Available' ? 'green' : 'blue'; // Change color as needed
+  const style = {
+    backgroundColor,
+    color: 'white',
+    borderRadius: '0px',
+    border: 'none',
+    display: 'block',
+  };
+  return {
+    style,
+  };
+};
+
 const Calendar: React.FC<CalendarProps> = ({ events }) => {
   return (
     <div className="bg-white p-4 shadow-md rounded-md">
@@ -25,6 +39,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
         startAccessor="start"
         endAccessor="end"
         style={{ height: 800 }}
+        eventPropGetter={eventStyleGetter}
       />
     </div>
   );
