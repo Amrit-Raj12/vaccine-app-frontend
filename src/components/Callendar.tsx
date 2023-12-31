@@ -1,6 +1,6 @@
 import { Calendar as BigCalendar, Views, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import moment from 'moment'
+import moment from 'moment';
 
 const localizer = momentLocalizer(moment);
 
@@ -32,15 +32,42 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   return (
     <div className="bg-white p-4 shadow-md rounded-md">
       <h1 className="text-2xl font-bold mb-4">Appointment Calendar</h1>
-      <BigCalendar
-        localizer={localizer}
-        events={events}
-        views={[Views.MONTH, Views.WEEK, Views.DAY]}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 800 }}
-        eventPropGetter={eventStyleGetter}
-      />
+      <div className="sm:hidden ">
+        {/* For mobile screens */}
+        <BigCalendar
+          localizer={localizer}
+          events={events}
+          views={[Views.MONTH]}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 400 }}
+          eventPropGetter={eventStyleGetter}
+        />
+      </div>
+      <div className="hidden sm:block md:hidden">
+        {/* For tablets */}
+        <BigCalendar
+          localizer={localizer}
+          events={events}
+          views={[Views.MONTH]}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 500 }}
+          eventPropGetter={eventStyleGetter}
+        />
+      </div>
+      <div className="hidden md:block">
+        {/* For desktop */}
+        <BigCalendar
+          localizer={localizer}
+          events={events}
+          views={[Views.MONTH]}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 800 }}
+          eventPropGetter={eventStyleGetter}
+        />
+      </div>
     </div>
   );
 };

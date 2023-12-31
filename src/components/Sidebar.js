@@ -91,7 +91,7 @@ const Sidebar = () => {
   return (
     <aside
       id="default-sidebar"
-      className="xl:mt-0 sm:mt-[4.68rem] z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+      className="xl:mt-0 sm:mt-[4.68rem] z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 hidden xl:block"
       aria-label="Sidebar"
     >
       <div className="h-full px-3 py-4 overflow-y-auto bg-green-700">
