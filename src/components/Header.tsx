@@ -1,9 +1,17 @@
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Header = () => {
   const [show, setShow] = useState<Boolean>();
   const [profile, setProfile] = useState<Boolean>(false);
+
+  const [hasToken, setHasToken] = useState<boolean>(false);
+
+  useEffect(() => {
+    const token: string | null = localStorage.getItem('token');
+    setHasToken(!!token);
+  }, []);
+
   return (
     <>
       <div className="bg-green-800 h-full w-full">
@@ -359,7 +367,7 @@ const Header = () => {
                       </button>
                     </div>
                   </form>
-                  <div className="ml-6 relative">
+                  <div className={!hasToken ? "hidden":"ml-6 relative"}>
                     <div
                       className="flex items-center relative"
                       onClick={() => setProfile(!profile)}
