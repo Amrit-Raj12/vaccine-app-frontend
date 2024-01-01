@@ -3,14 +3,10 @@ import Link from 'next/link';
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import authService from '@/services/authService';
+import formDataSignUp from '@/types/register';
+import axios from 'axios';
 
-
-interface formData {
-  name: string
-  email: string
-  password: string
-  termsAndConditions: boolean
-};
 
 const defaultValues = {
   name: "",
@@ -45,13 +41,21 @@ const Signup = (): JSX.Element => {
     defaultValues,
   });
 
-  const onSubmit = (data: formData) => {
-    console.log("Called onSubmit", data);
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.keyCode === 13) {
       handleSubmit(onSubmit)
+    }
+  };
+
+  const onSubmit = async (data: formDataSignUp) => {
+    console.log("Called onSubmit", data);
+    try {
+      const response = await authService.register(data);
+      // const response = await axios.post("http://localhost:8000/", data)
+      console.log("response", response);
+    } catch (error) {
+      console.log("error: ", error);
     }
   };
 
@@ -103,6 +107,7 @@ const Signup = (): JSX.Element => {
                     <FormControl
                       isInvalid={!!termsAndConditionsError}
                       id="termsAndConditions"
+                      isRequired
                     >
                       <Checkbox
                         colorScheme='teal'
