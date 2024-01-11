@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const Sidebar = () => {
@@ -5,10 +6,10 @@ const Sidebar = () => {
   // sideBarMenuItems
   const asideMenu = [
     {
-    key:'dash1a',
-    name: 'Dashboard',
+    key:'appointment',
+    name: 'Appointment',
     icon: (<svg
-    className="w-5 h-5 text-indigo-500 transition duration-75 dark:text-indigo-400 group-hover:text-indigo-900 dark:group-hover:text-white"
+    className="w-5 h-5 text-green-500 transition duration-75 dark:text-green-400 group-hover:text-green-900 dark:group-hover:text-white"
     aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     fill="currentColor"
@@ -19,13 +20,13 @@ const Sidebar = () => {
     <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
     </>
   </svg>),
-  href:'#',
+  href:'/appointment',
   },
   {
-    key:'kan1b',
-    name: 'Kanban',
+    key:'availability',
+    name: 'Availability',
     icon: (<svg
-    className="w-5 h-5 text-indigo-500 transition duration-75 dark:text-indigo-400 group-hover:text-indigo-900 dark:group-hover:text-white"
+    className="w-5 h-5 text-green-500 transition duration-75 dark:text-green-400 group-hover:text-green-900 dark:group-hover:text-white"
     aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     fill="currentColor"
@@ -37,14 +38,14 @@ const Sidebar = () => {
     </>
   </svg>
     ),
-    href:'#',
+    href:'/availability',
     chipName:'Pro'
   },
   {
     key:'in1b',
     name: 'Inbox',
     icon: (<svg
-      className="flex-shrink-0 w-5 h-5 text-indigo-500 transition duration-75 dark:text-indigo-400 group-hover:text-indigo-900 dark:group-hover:text-white"
+      className="flex-shrink-0 w-5 h-5 text-green-500 transition duration-75 dark:text-green-400 group-hover:text-green-900 dark:group-hover:text-white"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
@@ -60,7 +61,7 @@ const Sidebar = () => {
     key:'us1b',
     name: 'Users',
     icon: (<svg
-      className="flex-shrink-0 w-5 h-5 text-indigo-500 transition duration-75 dark:text-indigo-400 group-hover:text-indigo-900 dark:group-hover:text-white"
+      className="flex-shrink-0 w-5 h-5 text-green-500 transition duration-75 dark:text-green-400 group-hover:text-green-900 dark:group-hover:text-white"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
@@ -75,7 +76,7 @@ const Sidebar = () => {
     key:'pr1b',
     name: 'Products',
     icon: (<svg
-      className="flex-shrink-0 w-5 h-5 text-indigo-500 transition duration-75 dark:text-indigo-400 group-hover:text-indigo-900 dark:group-hover:text-white"
+      className="flex-shrink-0 w-5 h-5 text-green-500 transition duration-75 dark:text-green-400 group-hover:text-green-900 dark:group-hover:text-white"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
@@ -98,16 +99,16 @@ const Sidebar = () => {
         <ul className="space-y-2 font-medium">
           {asideMenu.map((item) => (
             <li key={item.key}>
-            <a
+            <Link
               href={item.href}
-              className="flex items-center p-2 text-indigo-900 rounded-lg dark:text-white hover:bg-indigo-100 dark:hover:bg-indigo-700 group"
+              className="flex items-center p-2 text-green-900 rounded-lg dark:text-white hover:bg-green-100 dark:hover:bg-green-900 group"
             >
               {item.icon}
               <span className="flex-1 ms-3 whitespace-nowrap">{item.name}</span>
-              <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-indigo-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-indigo-300">
+              <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-green-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-green-300">
                 {item.chipName}
               </span>
-            </a>
+            </Link>
           </li>
           ))}
         </ul>
