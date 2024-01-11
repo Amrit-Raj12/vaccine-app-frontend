@@ -4,12 +4,13 @@ import Link from 'next/link';
 import { useForm } from "react-hook-form"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-
-interface formData {
-    email: string
-    password: string
-};
+import authService from '@/services/authService';
+import { formDataLogin } from '@/types/login';
+import { useDispatch } from 'react-redux';
+import { setUserState } from '@/redux/userSlice';
+import Cookies from 'js-cookie';
+import saveCookies from '@/utils/cookieSaver';
+import { useRouter } from 'next/router';
 
 const defaultValues = {
     email: "",
@@ -25,7 +26,11 @@ const formSchema = z
     });
 
 
+
 const Login = (): JSX.Element => {
+
+    const dispatch = useDispatch();
+    const router = useRouter();
 
     const {
         register,
@@ -36,8 +41,16 @@ const Login = (): JSX.Element => {
         defaultValues,
     });
 
-    const onSubmit = (data: formData) => {
-        console.log("Called onSubmit", data);
+    const onSubmit = async (data: formDataLogin) => {
+        try {
+            const response = await authService.login(data as formDataLogin);
+            saveCookies({ id: response.id, atoken: response.token.accessToken, rtoken: response.token.refreshToken });
+            dispatch(setUserState(response));
+            return router.push('/appointment');
+        } catch (error) {
+            console.log("error: ", error);
+        }
+
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -84,7 +97,7 @@ const Login = (): JSX.Element => {
                                     Submit
                                 </Button>
                                 <Text fontSize='md' className='text-sm font-light text-green-500'>
-                                    Not have an account? <Link href='/auth/signup' className='font-medium text-primary-600 hover:underline'>Sign-Up</Link>
+                                    Not have an account? <Link href='/auth/register' className='font-medium text-primary-600 hover:underline'>Sign-Up</Link>
                                 </Text>
                             </form>
                         </div>

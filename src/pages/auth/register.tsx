@@ -49,10 +49,8 @@ const Signup = (): JSX.Element => {
   };
 
   const onSubmit = async (data: formDataSignUp) => {
-    console.log("Called onSubmit", data);
     try {
       const response = await authService.register(data);
-      // const response = await axios.post("http://localhost:8000/", data)
       console.log("response", response);
     } catch (error) {
       console.log("error: ", error);

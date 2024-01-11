@@ -1,12 +1,16 @@
 /* eslint-disable import/no-anonymous-default-export */
 import formDataSignUp from "@/types/register";
 import requests from "./http";
+import { formDataLogin } from "@/types/login";
 
 class AuthService {
   register(payload: formDataSignUp){
-    return requests.post("/register", payload);
+    return requests.post("/auth/register", payload);
   }
-  login(payload: Record<string, string>) {
+  verify(payload: string, signal: Record<string, unknown> = {}){
+    return requests.get(`/auth/verify/${payload}`);
+  }
+  login(payload: formDataLogin) {
     return requests.post("/auth/login", payload);
   }
 };

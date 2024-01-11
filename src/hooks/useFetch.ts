@@ -1,32 +1,30 @@
-import React, { useEffect, useState } from "react";
-// import { useAuth } from "../context";
+import { AxiosError } from "axios";
+import { useEffect, useState } from "react";
 
-export default function useFetch <T>(getFunction: () => Promise<T>) {
-
-  // const { dispatch } = useAuth();
-
-  const [data, setData] = useState<T | null>(null);
+const useFetch = <T>(getFunction: () => Promise<T>) => {
+const [data, setData] = useState<T | null>(null);
   const [status, setStatus] = useState("idle");
-  const [error, setError] =  useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setStatus("pending");
     setData(null);
     setError(null);
-
+    const controller = new AbortController();
     getFunction()
       .then((res) => {
         setData(res);
         setStatus("success");
       })
       .catch((err) => {
-        if (err?.response?.status === 401) {
-          console.log("Error....");
-          // dispatch({ type: "LOGOUT" });
+        if (controller.signal.aborted) {
+          setError(err);
+          setStatus("error");
         }
-        setError(err);
+        setError(err?.response?.data?.message);
         setStatus("error");
       });
+    return () => controller.abort();
   }, [getFunction]);
 
   return {
@@ -37,3 +35,5 @@ export default function useFetch <T>(getFunction: () => Promise<T>) {
     isError: status === "error",
   };
 }
+
+export default useFetch;

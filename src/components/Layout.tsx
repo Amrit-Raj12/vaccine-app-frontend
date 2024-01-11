@@ -14,10 +14,10 @@ interface MyComponentProps {
 const Layout: React.FC<MyComponentProps> = ({ children }) => {
   const [hasToken, setHasToken] = useState<boolean>(false);
 
-  useEffect(() => {
-    const token: string | null = localStorage.getItem('token');
-    setHasToken(!!token);
-  }, []);
+  // useEffect(() => {
+  //   const token: string | null = localStorage.getItem('token');
+  //   setHasToken(!!token);
+  // }, []);
 
   return (
     <div className='flex flex-col h-screen w-full'>

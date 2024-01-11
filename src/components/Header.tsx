@@ -7,11 +7,12 @@ const Header = () => {
 
   const [hasToken, setHasToken] = useState<boolean>(false);
 
-  useEffect(() => {
-    const token: string | null = localStorage.getItem('token');
-    setHasToken(!!token);
-  }, []);
-
+ 
+ // useEffect(() => {
+  //   const token: string | null = localStorage.getItem('token');
+  //   setHasToken(!!token);
+  // }, []);
+  
   return (
     <>
       <div className="bg-green-800 h-full w-full">
@@ -218,7 +219,7 @@ const Header = () => {
                     </g>
                   </svg>
                   <h2 className="hidden sm:block text-base text-white font-bold leading-normal pl-3">
-                    <Link href="/">The Logo</Link>
+                    <Link href="/appointment">The Logo</Link>
                   </h2>
                 </div>
               </div>
@@ -226,7 +227,7 @@ const Header = () => {
 
                 <div className="hidden md:mr-6 xl:mr-16">
                   <a
-                    href="javascript: void(0)"
+                    href=""
                     className="flex px-5 items-center py-6 text-sm leading-5 text-white hover:text-green-500 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition duration-150 ease-in-out"
                   >
                     <span className="mr-2">
@@ -252,7 +253,7 @@ const Header = () => {
                     Menu1
                   </a>
                   <a
-                    href="javascript: void(0)"
+                    href=""
                     className="flex px-5 items-center py-6 text-sm leading-5 text-white hover:text-green-500 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition duration-150 ease-in-out"
                   >
                     <span className="mr-2">
@@ -275,7 +276,7 @@ const Header = () => {
                     Menu2
                   </a>
                   <a
-                    href="javascript: void(0)"
+                    href=""
                     className="flex px-5 items-center py-6 text-sm leading-5 text-white hover:text-green-500 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition duration-150 ease-in-out"
                   >
                     <span className="mr-2">
@@ -299,7 +300,7 @@ const Header = () => {
                     Menu3
                   </a>
                   <a
-                    href="javascript: void(0)"
+                    href=""
                     className="flex px-5 items-center py-6 text-sm leading-5 text-white hover:text-green-500 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition duration-150 ease-in-out"
                   >
                     <span className="mr-2">

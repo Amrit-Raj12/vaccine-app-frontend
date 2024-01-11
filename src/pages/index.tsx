@@ -1,10 +1,23 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import Calendar from '@/components/Callendar';
+import { useCallback } from 'react';
+import appointmentService from '@/services/appointmentService';
+import useFetch from '@/hooks/useFetch';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+
+
+
+  const getAvailableDates = useCallback(() => {
+      return appointmentService.getAvailibity();
+  }, []);
+
+  const { data, error, isLoading, isError, isSuccess } = useFetch(getAvailableDates);
+
+  // console.log("Api Called",data);
 
   const availableDates: Date[] = [
     new Date(2023, 11, 23),
