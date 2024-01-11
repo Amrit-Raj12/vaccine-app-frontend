@@ -1,10 +1,14 @@
-import React from "react";
-
-const Modal = ({ isOpen, onClose, children }) => {
+import React, { ReactNode } from "react";
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-8 rounded-md shadow-md w-3/4 ml-80 relative">
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-10">
+      <div className="bg-green-200 p-8 rounded-md shadow-md w-3/4 ml-80 relative">
         <button
           className="absolute top-2 left-2 text-gray-600"
           onClick={onClose}
@@ -15,7 +19,7 @@ const Modal = ({ isOpen, onClose, children }) => {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            class="w-6 h-6"
+            className="w-6 h-6"
           >
             <path
               strokeLinecap="round"
