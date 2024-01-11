@@ -1,18 +1,24 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
+interface RootState {
+  userStore: {
+    mainUser: {
+      token: {
+        accessToken: string
+      }
+    };
+  };
+}
 
 const Header = () => {
   const [show, setShow] = useState<Boolean>();
   const [profile, setProfile] = useState<Boolean>(false);
 
-  const [hasToken, setHasToken] = useState<boolean>(false);
+  const {accessToken} = useSelector((state: RootState) => state.userStore.mainUser.token)
 
- 
- // useEffect(() => {
-  //   const token: string | null = localStorage.getItem('token');
-  //   setHasToken(!!token);
-  // }, []);
-  
+
   return (
     <>
       <div className="bg-green-800 h-full w-full">
@@ -368,7 +374,7 @@ const Header = () => {
                       </button>
                     </div>
                   </form>
-                  <div className={!hasToken ? "hidden":"ml-6 relative"}>
+                  <div className={!accessToken ? "hidden":"ml-6 relative"}>
                     <div
                       className="flex items-center relative"
                       onClick={() => setProfile(!profile)}
