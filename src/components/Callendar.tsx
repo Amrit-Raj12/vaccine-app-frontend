@@ -14,6 +14,10 @@ interface CalendarProps {
   events: Event[];
 }
 
+interface CustomCalendarProps extends CalendarProps {
+  handleEventClick: (event: Event) => void;
+}
+
 const eventStyleGetter = (event: Event) => {
   const backgroundColor = event.title === 'Available' ? 'green' : 'blue'; // Change color as needed
   const style = {
@@ -28,7 +32,7 @@ const eventStyleGetter = (event: Event) => {
   };
 };
 
-const Calendar: React.FC<CalendarProps> = ({ events }) => {
+const Calendar: React.FC<CustomCalendarProps> = ({ events, handleEventClick }) => {
   return (
     <div className="bg-white p-4 shadow-md rounded-md">
       <h1 className="text-2xl font-bold mb-4">Appointment Calendar</h1>
@@ -38,6 +42,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
           localizer={localizer}
           events={events}
           views={[Views.MONTH]}
+          onSelectEvent={handleEventClick}
           startAccessor="start"
           endAccessor="end"
           style={{ height: 400 }}
@@ -50,6 +55,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
           localizer={localizer}
           events={events}
           views={[Views.MONTH]}
+          onSelectEvent={handleEventClick}
           startAccessor="start"
           endAccessor="end"
           style={{ height: 500 }}
@@ -62,6 +68,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
           localizer={localizer}
           events={events}
           views={[Views.MONTH]}
+          onSelectEvent={handleEventClick}
           startAccessor="start"
           endAccessor="end"
           style={{ height: 800 }}
