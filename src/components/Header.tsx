@@ -1,6 +1,6 @@
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import Cookies from 'js-cookie';
 
 interface RootState {
   userStore: {
@@ -16,7 +16,9 @@ const Header = () => {
   const [show, setShow] = useState<Boolean>();
   const [profile, setProfile] = useState<Boolean>(false);
 
-  const {accessToken} = useSelector((state: RootState) => state.userStore.mainUser.token)
+  const getAccessToken = () => {
+    return Cookies.get('accessToken');
+  };
 
 
   return (
@@ -374,7 +376,7 @@ const Header = () => {
                       </button>
                     </div>
                   </form>
-                  <div className={!accessToken ? "hidden":"ml-6 relative"}>
+                  <div className={!getAccessToken() ? "hidden":"ml-6 relative"}>
                     <div
                       className="flex items-center relative"
                       onClick={() => setProfile(!profile)}
