@@ -55,7 +55,7 @@ instance.interceptors.response.use(
       } catch (refreshError) {
         // Refresh token failed, redirect to login or handle accordingly
         console.log("Refresh token failed", refreshError);
-         window.location.href = '/login';
+         window.location.href = '/auth/login';
         // You may want to redirect to login or show an error message
         // Redirect to login page: window.location.href = '/login';
         return Promise.reject(refreshError);
