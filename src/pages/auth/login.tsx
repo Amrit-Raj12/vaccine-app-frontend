@@ -46,7 +46,7 @@ const Login = (): JSX.Element => {
             const response = await authService.login(data as formDataLogin);
             saveCookies({ id: response.id, atoken: response.token.accessToken, rtoken: response.token.refreshToken });
             dispatch(setUserState(response));
-            return router.push('/appointment');
+            return router.push('/');
         } catch (error) {
             console.log("error: ", error);
         }
