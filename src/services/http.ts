@@ -37,7 +37,7 @@ instance.interceptors.response.use(
       // Token error, try refreshing the token
       try {
         const refreshToken = Cookies.get("refreshToken");
-        const id = Cookies.get("user");
+        const id = Cookies.get("id");
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}/${process.env.NEXT_PUBLIC_APP_API_VERSION}/auth/refresh`,
           { id,refreshToken }
@@ -69,7 +69,7 @@ instance.interceptors.response.use(
 
 
 
-const responseBody = (response: AxiosResponse) => response.data.data;
+const responseBody = (response: AxiosResponse) => response.data;
 
 const requests = {
   get: (url: string) => instance.get(url).then(responseBody),

@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   }
 
   if(token && routes.auth.includes(request.nextUrl.pathname)) {
-    const absoluteUrl = new URL("/dashboard",request.nextUrl.origin);
+    const absoluteUrl = new URL("/",request.nextUrl.origin);
       return NextResponse.redirect(absoluteUrl.toString());
   }
 }

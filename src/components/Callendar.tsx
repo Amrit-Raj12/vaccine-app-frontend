@@ -34,8 +34,8 @@ const eventStyleGetter = (event: Event) => {
 
 const Calendar: React.FC<CustomCalendarProps> = ({ events, handleEventClick }) => {
   return (
-    <div className="bg-white p-4 shadow-md rounded-md">
-      <h1 className="text-2xl font-bold mb-4">Appointment Calendar</h1>
+    <div className="bg-white px-4 shadow-md rounded-md">
+      <h1 className="text-2xl font-bold mb-4 p-2">Appointment Calendar</h1>
       <div className="sm:hidden ">
         {/* For mobile screens */}
         <BigCalendar
@@ -71,7 +71,7 @@ const Calendar: React.FC<CustomCalendarProps> = ({ events, handleEventClick }) =
           onSelectEvent={handleEventClick}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 800 }}
+          style={{ height: 750 }}
           eventPropGetter={eventStyleGetter}
         />
       </div>

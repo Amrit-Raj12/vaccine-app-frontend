@@ -1,6 +1,6 @@
 export const routes =  Object.freeze(
   {
-    protected:["/appointment", "/dashboard"], 
+    protected:["/","/appointment", "/availability"], 
     auth:['/auth/login', '/auth/register']
   }
   );

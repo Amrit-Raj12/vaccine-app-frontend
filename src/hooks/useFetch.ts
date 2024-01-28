@@ -1,8 +1,12 @@
+import { Toast } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
+import { useToast } from "@chakra-ui/react";
+
 
 const useFetch = <T>(getFunction: () => Promise<T>) => {
 const [data, setData] = useState<T | null>(null);
+const toast = useToast();
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
 
@@ -17,6 +21,12 @@ const [data, setData] = useState<T | null>(null);
         setStatus("success");
       })
       .catch((err) => {
+        toast({
+          title: `Oops something went wrong`,
+          position: 'top-right',
+          status: 'error',
+          isClosable: true,
+        });
         if (controller.signal.aborted) {
           setError(err);
           setStatus("error");

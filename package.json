@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@hookform/resolvers": "^3.3.3",
     "@reduxjs/toolkit": "^2.0.1",
+    "@tanstack/react-table": "^8.11.7",
     "@types/react-big-calendar": "^1.8.7",
     "axios": "^1.6.3",
     "framer-motion": "^6",

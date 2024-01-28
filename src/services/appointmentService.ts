@@ -2,17 +2,19 @@
 import formDataSignUp from "@/types/register";
 import requests from "./http";
 import { formDataLogin } from "@/types/login";
+import { AppointmentType } from "@/types/appointment";
 
 class AuthService {
   getAvailibity() {
     return requests.get("/availability");
   }
-  // verify(payload: string, signal: Record<string, unknown> = {}) {
-  //   return requests.get(`/auth/verify/${payload}`);
-  // }
-  // login(payload: formDataLogin) {
-  //   return requests.post("/auth/login", payload);
-  // }
+  takeAppointment(payload: AppointmentType) {
+    return requests.post(`/appointments`, payload);
+  }
+  getAllAppointments(query?: string) {
+    return requests.get( query ? `/appointments${query}`: 'appointments' ); 
+  };
+
 };
 
 export default new AuthService();
