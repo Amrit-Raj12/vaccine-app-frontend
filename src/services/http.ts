@@ -2,6 +2,7 @@ import saveCookies from '@/utils/cookieSaver';
 import axios, { AxiosHeaderValue, AxiosResponse, HeadersDefaults } from 'axios';
 import Cookies from 'js-cookie';
 import { redirect } from 'next/dist/server/api-utils';
+import { NextResponse } from 'next/server';
 
 const instance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}/${process.env.NEXT_PUBLIC_APP_API_VERSION}`
@@ -54,8 +55,9 @@ instance.interceptors.response.use(
         return axios(originalRequest);
       } catch (refreshError) {
         // Refresh token failed, redirect to login or handle accordingly
-        console.log("Refresh token failed", refreshError);
+        // console.log("Refresh token failed", refreshError);
          window.location.href = '/auth/login';
+        // return NextResponse.redirect('/auth/login')
         // You may want to redirect to login or show an error message
         // Redirect to login page: window.location.href = '/login';
         return Promise.reject(refreshError);

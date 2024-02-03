@@ -16,6 +16,7 @@ export interface propsType {
   selectedDate: string;
   handleSubmit: () => void;
   setFormData: (data: SetStateAction<AppointmentType>) => void;
+  formData: AppointmentType
 };
 
 export interface AppointmentsPropType {
@@ -32,6 +33,10 @@ export interface paginationType{
   page:string,
   totalItems:string,
   totalPage:string
+  sort_type: string,
+  sort_by: string,
+  search: string,
+  status: string
 }
 
 export interface tablePropType {

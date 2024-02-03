@@ -11,7 +11,7 @@ import { SetStateAction } from "react";
 import { propsType } from "@/types/appointment";
 
 // AppointmentType
-const AppointmentForm = ({ selectedDate, handleSubmit, setFormData, formData }: propsType) => {
+const AppointmentDetails = ({ selectedDate, handleSubmit, setFormData, formData }: propsType) => {
 
   interface AppointmentType { vaccine: string, date: string }
 
@@ -54,7 +54,7 @@ const AppointmentForm = ({ selectedDate, handleSubmit, setFormData, formData }: 
           mt={4}
           colorScheme="teal"
           onClick={handleSubmit}
-          isDisabled={formData.vaccine ? false : true }
+          isDisabled={formData.vaccine ? false : true}
         >
           Submit
         </Button>
@@ -63,4 +63,4 @@ const AppointmentForm = ({ selectedDate, handleSubmit, setFormData, formData }: 
   )
 };
 
-export default AppointmentForm;
+export default AppointmentDetails;

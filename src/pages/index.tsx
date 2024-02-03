@@ -5,7 +5,7 @@ import appointmentService from "@/services/appointmentService";
 import useFetch from "@/hooks/useFetch";
 import Modal from "@/components/Modal";
 import AppointmentForm from "@/components/AppointmentForm";
-import { AppointmentType, Event } from "@/types/appointment";
+import { AppointmentType, Event, propsType } from "@/types/appointment";
 import { useToast } from "@chakra-ui/react";
 
 
@@ -50,8 +50,9 @@ const GetAppointments = () => {
         status: 'success',
         isClosable: true,
       })
-
-    } catch (error : any) {
+      setModalVisible(false);
+      setFormData({} as AppointmentType)
+    } catch (error: any) {
       toast({
         title: `${error.response.data.message}`,
         position: 'top-right',
@@ -73,9 +74,10 @@ const GetAppointments = () => {
         isOpen={modalVisible}
         onClose={() => {
           setModalVisible(false);
+          setFormData({} as AppointmentType)
         }}
       >
-        <AppointmentForm selectedDate={formData.date} handleSubmit={handleSubmit} setFormData={setFormData} />
+        <AppointmentForm selectedDate={formData.date} formData={formData} handleSubmit={handleSubmit} setFormData={setFormData} />
       </Modal>
     </div>
   );

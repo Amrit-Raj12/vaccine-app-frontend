@@ -21,12 +21,13 @@ const toast = useToast();
         setStatus("success");
       })
       .catch((err) => {
-        toast({
-          title: `Oops something went wrong`,
-          position: 'top-right',
-          status: 'error',
-          isClosable: true,
-        });
+        console.log(err);
+        // toast({
+        //   title: `Oops something went wrong`,
+        //   position: 'top-right',
+        //   status: 'error',
+        //   isClosable: true,
+        // });
         if (controller.signal.aborted) {
           setError(err);
           setStatus("error");

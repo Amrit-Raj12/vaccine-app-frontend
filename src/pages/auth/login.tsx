@@ -1,5 +1,5 @@
 
-import { Button, Checkbox, FormControl, FormErrorMessage, FormLabel, Input, Text } from '@chakra-ui/react';
+import { Button, Checkbox, FormControl, FormErrorMessage, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useForm } from "react-hook-form"
 import { z } from "zod";
@@ -31,6 +31,7 @@ const Login = (): JSX.Element => {
 
     const dispatch = useDispatch();
     const router = useRouter();
+    const toast = useToast();
 
     const {
         register,
@@ -44,11 +45,17 @@ const Login = (): JSX.Element => {
     const onSubmit = async (data: formDataLogin) => {
         try {
             const response = await authService.login(data as formDataLogin);
-            saveCookies({ id: response.id, atoken: response.token.accessToken, rtoken: response.token.refreshToken });
+            saveCookies({ id: response.data.id, atoken: response.data.token.accessToken, rtoken: response.data.token.refreshToken });
             dispatch(setUserState(response));
             return router.push('/');
-        } catch (error) {
+        } catch (error: any) {
             console.log("error: ", error);
+            // toast({
+            //     title: `${error?.response.data.message}`,
+            //     position: 'top-right',
+            //     status: 'error',
+            //     isClosable: true,
+            // })
         }
 
     };

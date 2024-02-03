@@ -1,33 +1,66 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AppointmentTable from '../../components/Table';
 import useFetch from '@/hooks/useFetch';
 import appointmentService from '@/services/appointmentService';
-import { defaultPagination } from '@/constants/appointments';
+import { defaultPagination, statusData } from '@/constants/appointments';
+import { Button, Input, InputGroup, InputLeftElement, InputRightAddon, InputRightElement, Menu, MenuButton, MenuItem, MenuList, Select, Text } from '@chakra-ui/react';
+import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
+
 
 
 const Appointments = () => {
-
   const [pagination, setPagination] = useState(defaultPagination);
-  // const [query, setQuery] = useState('');
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const getAllAppointments = useCallback(() => {
-    const query = `${pagination.page ? `?page=${pagination.page}` : ''}${pagination.limit ? `&limit=${pagination.limit}` : ''}`;
+    const query = `${pagination.page ? `?page=${pagination.page}` : ''}${pagination.limit ? `&limit=${pagination.limit}`
+      : ''}${pagination.sort_by ? `&sort_by=${pagination.sort_by}`
+        : ''}${pagination.sort_type ? `&sort_type=${pagination.sort_type}`
+          : ''}${pagination.search ? `&search=${pagination.search}` : ''}${pagination.status == 'all' ? '' : `&status=${pagination.status}`}`;
     return appointmentService.getAllAppointments(query);
   }, [pagination]);
 
   const { data, error, isLoading, isError, isSuccess } =
     useFetch(getAllAppointments);
 
-  // useEffect(() => {
-  //   if (data?.pagination) {
-  //     // console.log(data?.pagination);
-  //     const apiData = { totalItems: data?.pagination.totalitems, currentPage: data?.pagination.page, dataPerPage: data?.pagination.limit }
-  //     setPagination((prv) => ({ ...prv, apiData }));
-  //   }
-  // }, [data]);
+  const onChangeSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>): void => {
+    const value = e.target.value.trim();
+
+    // Clear any previous timeout
+    if (debounceTimeoutRef.current !== null) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    // Set a new timeout to debounce the search
+    debounceTimeoutRef.current = setTimeout(() => {
+      setPagination((prev) => ({ ...prev, search: value }));
+    }, 1000);
+  }, []);
+
 
   return (
-    <div>
+    <div className=' bg-slate-100 mx-auto my-12 w-11/12 rounded-lg'>
+      <div className='flex justify-between items-center mb-1 px-4 bg-white'>
+        <Text as='b' className='p-4'>All Appointments</Text>
+        <div className='flex w-2/3'>
+          <InputGroup className='mr-4'>
+            <Input onChange={onChangeSearch} type="text" placeholder="Search" />
+
+            <InputRightElement
+              pointerEvents="none"
+            >
+              <SearchIcon color="gray.300" /></InputRightElement>
+          </InputGroup>
+
+          <div className='w-2/6'>
+            <Select onChange={({ target }) => setPagination(prv => ({ ...prv, status: target.value }))}>
+              {statusData.map((item, id) => (
+                <option value={item.toLowerCase()} key={id}>{item}</option>))}
+
+            </Select>
+          </div>
+        </div>
+      </div>
       <AppointmentTable data={data?.data} pagination={data?.pagination} setPagination={setPagination} links={data?.links} />
     </div>
   );

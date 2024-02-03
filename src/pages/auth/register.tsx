@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControl, FormErrorMessage, FormLabel, Input, Text } from '@chakra-ui/react';
+import { Button, Checkbox, FormControl, FormErrorMessage, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
 import Link from 'next/link';
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod";
@@ -28,7 +28,7 @@ const formSchema = z
   });
 
 const Signup = (): JSX.Element => {
-
+  const toast = useToast();
 
   const {
     control,
@@ -51,9 +51,21 @@ const Signup = (): JSX.Element => {
   const onSubmit = async (data: formDataSignUp) => {
     try {
       const response = await authService.register(data);
+      toast({
+        title: `${response.message}`,
+        position: 'top-right',
+        status: 'success',
+        isClosable: true,
+      })
       console.log("response", response);
-    } catch (error) {
+    } catch (error: any) {
       console.log("error: ", error);
+      toast({
+        title: `${error?.response.data.message}`,
+        position: 'top-right',
+        status: 'error',
+        isClosable: true,
+      })
     }
   };
 

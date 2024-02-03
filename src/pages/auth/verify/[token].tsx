@@ -26,7 +26,7 @@ const VerifyToken = () => {
     return (<div className=' min-h-screen flex'>
 
       <div className='m-auto flex flex-col'>
-        <h1 className='my-2 text-4xl'>Email Successfuly Verified</h1>
+        <h4 className='my-2 text-4xl'>Email Successfuly Verified</h4>
         <Button size={'md'} colorScheme='green' onClick={() => router.push('/auth/login')}>Login</Button>
       </div>
     </div>)
@@ -35,8 +35,8 @@ const VerifyToken = () => {
   if (isError) {
     return (<div className=' min-h-screen flex'>
       <div className='m-auto flex flex-col align-middle justify-items-center'>
-        <h1 className='my-2 text-2xl text-red-700'>{error as ReactNode}</h1>
-        <Button className=' w-72 text-center mx-auto' size={'md'} colorScheme='blue' onClick={() => router.push('/auth/register')}>Register</Button>
+        <h4 className='my-2 text-2xl text-red-700'>{error as ReactNode}</h4>
+        <Button className=' w-52 text-center mx-auto' size={'sm'} colorScheme='blue' onClick={() => router.push('/auth/register')}>Register</Button>
       </div>
     </div>)
   }

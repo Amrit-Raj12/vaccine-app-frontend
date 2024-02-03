@@ -14,16 +14,20 @@ import {
 } from '@tanstack/react-table'
 import { AppointmentsPropType, tablePropType } from '@/types/appointment';
 import moment from 'moment';
-import { tableDataRange } from '@/constants/appointments';
-import { ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
-import { useState } from 'react';
+import { notSortableItems, tableDataRange } from '@/constants/appointments';
+import { ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon, TriangleDownIcon, TriangleUpIcon, ArrowBackIcon, ArrowForwardIcon, ViewIcon } from '@chakra-ui/icons'
+import { useCallback, useEffect, useState } from 'react';
+import Modal from "@/components/Modal";
+
 
 const columnHelper = createColumnHelper<AppointmentsPropType>()
 
 const columns = [
   columnHelper.accessor('_id', {
-    header: () => `Id`,
-    cell: info => `#${info.getValue()}`,
+    // header: () => `Id`,
+    cell: info => `#${info.getValue().substring(info.getValue().length - 8)}`,
+    header: () => <span>Appointment Id</span>,
+
   }),
   columnHelper.accessor(row => row.name, {
     id: 'name',
@@ -39,30 +43,42 @@ const columns = [
   }),
   columnHelper.accessor('date', {
     header: 'Appointment Date',
-    cell: props => <h5>{moment(props.renderValue()).format('YYYY-MM-DD')}</h5>
+    cell: props => <h5 className='mr-2'>{moment(props.renderValue()).format('YYYY-MM-DD')}</h5>
   }),
 ]
 
 function Table({ data, pagination, setPagination, links }: tablePropType) {
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
-  
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const table = useReactTable({
     data,
     columns,
-    getSortedRowModel: getSortedRowModel(),
+    // ui sorting
+    // getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
     state: {
-      sorting: sorting,
+      sorting
     },
+
     onSortingChange: setSorting,
   },);
+
+  const handleSortChange = useCallback(() => {
+    setPagination((prv) => ({ ...prv, sort_by: sorting[0]?.id, sort_type: sorting[0]?.desc ? 'dsc' : 'asc' }));
+  }, [sorting, setPagination]);
+
+  useEffect(() => {
+    if (!notSortableItems.includes(sorting[0]?.id)) {
+      handleSortChange()
+    }
+  }, [sorting]);
 
   const handleSelectChange = (data: string) => {
     setPagination((prv) => ({ ...prv, limit: data }))
   };
 
-  console.log(links);
+  // console.log(header.column);
 
   const getPaginationDetails = () => {
     const from = (parseInt(pagination?.page) - 1) * parseInt(pagination?.limit) + 1;
@@ -71,13 +87,21 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
   };
 
   return (
-    <div style={{ width: '85%', border: '1px solid red', margin: '90px' }}>
-      <table className=' w-full border-x-neutral-300 border'>
-        <thead className='m-5'>
+    <div>
+      <Modal
+        isOpen={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <h1>Hello</h1>
+      </Modal>
+      <table className=' w-full border-x-neutral-100 border'>
+        <thead className='p-5'>
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header, idx) => (
-                <th key={idx} className=' bg-slate-400' onClick={header.column.getToggleSortingHandler()}>
+                <th key={idx} className={`${!notSortableItems.includes(header.column.id) && 'cursor-pointer'} py-2 `} onClick={header.column.getToggleSortingHandler()}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -85,33 +109,36 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
                       header.getContext(),
                     )
                   }
-                  {
-                    { asc: '🔼', desc: '🔽' }[
-                    header.column.getIsSorted() as string ?? null
+                  {/* {  console.log(header.column) as ReactNode} */}
+                  {!notSortableItems.includes(header.column.id) &&
+                    { asc: <TriangleUpIcon w={3} h={3} />, desc: <TriangleDownIcon w={3} h={3} /> }
+                    [
+                    header.column.getIsSorted() as string
                     ]
                   }
 
-               
+
                 </th>
               ))}
             </tr>
           ))}
         </thead>
-        <tbody>
+        <tbody className='bg-white'>
           {!!data?.length && table?.getRowModel().rows.map(row => (
-            <tr key={row.id} className=' h-10 py-3'>
+            <tr key={row.id} className=' h-10 py-3 border border-gray-200'>
               {row.getVisibleCells().map((cell, idx) => (
                 <td key={idx} className='text-center'>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
+              <ViewIcon className='my-4 cursor-pointer' onClick={() => { setModalVisible(true); console.log(row) }} />
             </tr>
           ))}
         </tbody>
 
       </table>
-      <div className='flex'>
-        <div className='ml-auto w-8/12  border-lime-700 border flex'>
+      <div className='flex items-center py-2'>
+        <div className='ml-auto w-12/12 flex'>
           <div className='flex h-12 justify-center align-middle px-2'>
 
             <p className='mr-5 self-center font-medium'>Row Per page</p>
@@ -122,33 +149,40 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
             </div>
           </div>
 
+          <div className='ml-auto flex pr-2'>
+            <p className='mr-5 self-center font-medium'>{getPaginationDetails().from} - {getPaginationDetails().to} of {pagination?.totalItems}</p>
+            <button
+              onClick={() => setPagination((prv) => ({ ...prv, page: '1' }))}
+              className='px-1'
+            >
+              First Page
+              {/* <Icon as={ArrowLeftIcon} /> */}
+            </button>
+            <button
+              className='px-1'
+              disabled={!links?.prev}
+              onClick={() => setPagination((prv) => ({ ...prv, page: (parseInt(pagination?.page) - 1).toString() }))}
+            >
+              <Icon as={ArrowBackIcon} />
+              {/* ArrowBackIcon */}
+            </button>
 
-          <p className='mr-5 self-center font-medium'>{getPaginationDetails().from} - {getPaginationDetails().to} of {pagination?.totalItems}</p>
-          <button
-            onClick={() => setPagination((prv) => ({ ...prv, page: '1' }))}
-          >
+            <button disabled={!links?.next}
+              className='px-1'
+              onClick={() => setPagination((prv) => ({ ...prv, page: (parseInt(pagination?.page) + 1).toString() }))}
+            >
+              <Icon as={ArrowForwardIcon} />
+            </button>
+            <button
+              className='px-1'
+              disabled={!links?.next}
+              onClick={() => setPagination((prv) => ({ ...prv, page: pagination?.totalPage }))}
+            >
+              {/* <Icon as={ArrowRightIcon} /> */}
+              Last Page
+            </button>
 
-            <Icon as={ArrowLeftIcon} />
-          </button>
-          <button
-            disabled={!!links?.next}
-            onClick={() => setPagination((prv) => ({ ...prv, page: (parseInt(pagination?.page) - 1).toString() }))}
-          >
-            <Icon as={ChevronLeftIcon} />
-          </button>
-
-          <button disabled={!!links?.prev}
-            onClick={() => setPagination((prv) => ({ ...prv, page: (parseInt(pagination?.page) + 1).toString() }))}
-          >
-            <Icon as={ChevronRightIcon} />
-          </button>
-          <button
-            // disabled={!table.getCanNextPage()}
-            onClick={() => setPagination((prv) => ({ ...prv, page: pagination?.totalPage }))}
-          >
-            <Icon as={ArrowRightIcon} />
-          </button>
-
+          </div>
         </div>
       </div>
 
