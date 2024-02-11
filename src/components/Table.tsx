@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Icon, Select } from '@chakra-ui/react'
+import { Button, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Select } from '@chakra-ui/react'
 
 import {
   ColumnSort,
@@ -12,12 +12,18 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { AppointmentsPropType, tablePropType } from '@/types/appointment';
+import { AppointmentsPropType, rowDataType, tablePropType } from '@/types/appointment';
 import moment from 'moment';
 import { notSortableItems, tableDataRange } from '@/constants/appointments';
-import { ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon, TriangleDownIcon, TriangleUpIcon, ArrowBackIcon, ArrowForwardIcon, ViewIcon } from '@chakra-ui/icons'
+import { ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon, TriangleDownIcon, TriangleUpIcon, ArrowBackIcon, ArrowForwardIcon, ViewIcon, HamburgerIcon } from '@chakra-ui/icons'
 import { useCallback, useEffect, useState } from 'react';
 import Modal from "@/components/Modal";
+import { IRootState } from '@/redux/store';
+import { useSelector } from 'react-redux';
+import DeleteConfirmation from './DeleteConfirmation';
+import { ChakraModal } from './ChakraModal';
+import appointmentService from '@/services/appointmentService';
+import AppointmentDetails from './AppointmentDetails';
 
 
 const columnHelper = createColumnHelper<AppointmentsPropType>()
@@ -25,9 +31,8 @@ const columnHelper = createColumnHelper<AppointmentsPropType>()
 const columns = [
   columnHelper.accessor('_id', {
     // header: () => `Id`,
-    cell: info => `#${info.getValue().substring(info.getValue().length - 8)}`,
+    cell: info => `#${info.getValue().substring(info.getValue()?.length - 10)}`,
     header: () => <span>Appointment Id</span>,
-
   }),
   columnHelper.accessor(row => row.name, {
     id: 'name',
@@ -36,20 +41,24 @@ const columns = [
   }),
   columnHelper.accessor('status', {
     header: () => 'Status',
-    cell: info => info.renderValue(),
+    cell: info => info.renderValue() == 'pending' ? 'Pending' : "Completed",
   }),
   columnHelper.accessor('vaccine', {
     header: () => <span>Vaccine</span>,
   }),
   columnHelper.accessor('date', {
     header: 'Appointment Date',
-    cell: props => <h5 className='mr-2'>{moment(props.renderValue()).format('YYYY-MM-DD')}</h5>
+    cell: props => <h5 className='mr-2'>{moment(props.renderValue()).format('DD-MM-YYYY')}</h5>
   }),
 ]
 
 function Table({ data, pagination, setPagination, links }: tablePropType) {
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState({ view: false, delete: false, edit: false });
+  const [currentItem, setCurrentItem] = useState('');
+
+  const { role } = useSelector((state: IRootState) => state.userStore.mainUser);
+
 
   const table = useReactTable({
     data,
@@ -74,11 +83,10 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
     }
   }, [sorting]);
 
+
   const handleSelectChange = (data: string) => {
     setPagination((prv) => ({ ...prv, limit: data }))
   };
-
-  // console.log(header.column);
 
   const getPaginationDetails = () => {
     const from = (parseInt(pagination?.page) - 1) * parseInt(pagination?.limit) + 1;
@@ -86,16 +94,43 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
     return { from, to };
   };
 
+  const isDisabled = (data: rowDataType) => moment(data.date, "YYYY/MM/DD").isBefore(moment()) ? true : false;
+
+  const handleDelete = (data: rowDataType) => {
+    setCurrentItem(data._id);
+    setModalVisible((prv) => ({ ...prv, ["delete"]: true }));
+  };
+
+  const handleUpdate = (data: rowDataType) => {
+    setCurrentItem(data._id);
+    setModalVisible((prv) => ({ ...prv, ["view"]: true }));
+  };
+
+  const checkDisable = (current: number, total: number) => {
+    return current < total ? false : true;
+  };
+
   return (
     <div>
-      <Modal
-        isOpen={modalVisible}
+      <ChakraModal
+        isOpen={modalVisible.view}
         onClose={() => {
-          setModalVisible(false);
+          setModalVisible(prv => ({ ...prv, ['view']: false }));
         }}
       >
-        <h1>Hello</h1>
-      </Modal>
+        <AppointmentDetails {...{ currentItem, setModalVisible }} />
+      </ChakraModal>
+
+      <ChakraModal
+        isOpen={modalVisible.delete}
+        onClose={() => {
+          setModalVisible(prv => ({ ...prv, ['delete']: false }));
+        }}
+
+      >
+        <DeleteConfirmation {...{ currentItem, setModalVisible }} />
+      </ChakraModal>
+
       <table className=' w-full border-x-neutral-100 border'>
         <thead className='p-5'>
           {table.getHeaderGroups().map(headerGroup => (
@@ -109,14 +144,15 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
                       header.getContext(),
                     )
                   }
-                  {/* {  console.log(header.column) as ReactNode} */}
-                  {!notSortableItems.includes(header.column.id) &&
-                    { asc: <TriangleUpIcon w={3} h={3} />, desc: <TriangleDownIcon w={3} h={3} /> }
-                    [
-                    header.column.getIsSorted() as string
-                    ]
-                  }
 
+                  {!notSortableItems.includes(header.column.id) && (
+                    header.column.getIsSorted() && (
+                      header.column.getIsSorted() === "asc" ?
+                        <TriangleUpIcon w={3} h={3} /> :
+                        <TriangleDownIcon w={3} h={3} />
+                    )
+
+                  )}
 
                 </th>
               ))}
@@ -131,7 +167,19 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
-              <ViewIcon className='my-4 cursor-pointer' onClick={() => { setModalVisible(true); console.log(row) }} />
+              <Menu>
+                <MenuButton className='my-1'>
+                  <span className='font-semibold'>...</span>
+                </MenuButton>
+
+                <MenuList>
+                  {/* MenuItems are not rendered unless Menu is open */}
+                  <MenuItem onClick={() => handleUpdate(row.original)}> View </MenuItem>
+                  {['admin', 'doctor'].includes(role) && <MenuItem>Add Review</MenuItem>}
+                  {role === 'user' && <MenuItem>Add Review</MenuItem>}
+                  <MenuItem isDisabled={isDisabled(row.original)} onClick={() => handleDelete(row.original)}>Delete</MenuItem>
+                </MenuList>
+              </Menu>
             </tr>
           ))}
         </tbody>
@@ -144,7 +192,10 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
             <p className='mr-5 self-center font-medium'>Row Per page</p>
             <div className='mr-5 self-center'>
               <Select defaultValue={pagination?.limit} onChange={(event) => handleSelectChange(event.target.value)}>
-                {tableDataRange.map((row, idx) => <option key={idx} value={row}>{row}</option>)}
+                {tableDataRange.map((row, idx) => <option
+                  disabled={checkDisable(getPaginationDetails().to, parseInt(pagination?.totalItems))
+                    && (row > parseInt(pagination?.totalItems))}
+                  key={idx} value={row}>{row}</option>)}
               </Select>
             </div>
           </div>
@@ -178,7 +229,6 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
               disabled={!links?.next}
               onClick={() => setPagination((prv) => ({ ...prv, page: pagination?.totalPage }))}
             >
-              {/* <Icon as={ArrowRightIcon} /> */}
               Last Page
             </button>
 

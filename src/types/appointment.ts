@@ -48,4 +48,18 @@ export interface tablePropType {
     next?: string
   }
   setPagination: (data: SetStateAction<paginationType>) => void;
+};
+
+export interface rowDataType {
+    _id: string,
+    name: string,
+    status: string,
+    vaccine: string,
+    link: string,
+    date: string,
+}
+
+export interface ChildComponentProps {
+  setModalVisible: (data: SetStateAction<{ view: boolean; delete: boolean; edit: boolean; }>) => void;
+  currentItem: string
 }

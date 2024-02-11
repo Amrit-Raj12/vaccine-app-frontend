@@ -46,16 +46,16 @@ const Login = (): JSX.Element => {
         try {
             const response = await authService.login(data as formDataLogin);
             saveCookies({ id: response.data.id, atoken: response.data.token.accessToken, rtoken: response.data.token.refreshToken });
-            dispatch(setUserState(response));
+            dispatch(setUserState(response.data));
             return router.push('/');
         } catch (error: any) {
-            console.log("error: ", error);
-            // toast({
-            //     title: `${error?.response.data.message}`,
-            //     position: 'top-right',
-            //     status: 'error',
-            //     isClosable: true,
-            // })
+            // console.log("error: ", error);
+            toast({
+                title: `${error?.response.data.message}`,
+                position: 'top-right',
+                status: 'error',
+                isClosable: true,
+            })
         }
 
     };

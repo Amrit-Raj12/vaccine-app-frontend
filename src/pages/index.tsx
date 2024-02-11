@@ -1,4 +1,4 @@
-import React, { SetStateAction } from "react";
+import React, { SetStateAction, useEffect } from "react";
 import Calendar from "@/components/Callendar";
 import { useCallback, useState } from "react";
 import appointmentService from "@/services/appointmentService";
@@ -7,6 +7,9 @@ import Modal from "@/components/Modal";
 import AppointmentForm from "@/components/AppointmentForm";
 import { AppointmentType, Event, propsType } from "@/types/appointment";
 import { useToast } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
+import { setAppointmentState } from "@/redux/appointmentSlice";
+import { setAvailabilityState } from "@/redux/availabilitySlice";
 
 
 
@@ -14,6 +17,7 @@ const GetAppointments = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [formData, setFormData] = useState({} as AppointmentType);
   const toast = useToast();
+  const dispatch = useDispatch();
 
   const getAvailableDates = useCallback(() => {
     return appointmentService.getAvailibity();
@@ -27,6 +31,8 @@ const GetAppointments = () => {
     start: new Date(date),
     end: new Date(date),
   }));
+
+  useEffect(() => { dispatch(setAvailabilityState(data?.data)) },[data]);
 
   const handleEventClick = (event: Event) => {
     if (event.title === "Available") {
@@ -43,7 +49,7 @@ const GetAppointments = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await appointmentService.takeAppointment(formData);
+      await appointmentService.takeAppointment(formData);
       toast({
         title: `Appointment Successful`,
         position: 'top-right',
