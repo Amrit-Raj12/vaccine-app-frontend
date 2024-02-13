@@ -118,9 +118,10 @@ const AppointmentDetails = ({ setModalVisible, currentItem }: ChildComponentProp
               Vaccine :
             </div>
             <div className=' w-36 pl-1'>
-              <Select value={selected.vaccine} disabled={role !== 'admin'} onChange={(event) => setSelected((prv) => ({ ...prv, ['vaccine']: event.target.value }))}>
-                {vaccines.map((item, idx) => <option key={idx} value={item}>{item}</option>)}
-              </Select>
+              {role !== 'doctor' ? selected.vaccine :
+                <Select value={selected.vaccine} onChange={(event) => setSelected((prv) => ({ ...prv, ['vaccine']: event.target.value }))}>
+                  {vaccines.map((item, idx) => <option key={idx} value={item}>{item}</option>)}
+                </Select>}
             </div>
           </div>
 
@@ -130,12 +131,14 @@ const AppointmentDetails = ({ setModalVisible, currentItem }: ChildComponentProp
               Appointment Date:
             </span>
             <span className='w-30 pl-1'>
-              <Select disabled={role == 'doctor'} value={selected.date}
-                onChange={(event) => setSelected((prv) => ({ ...prv, ['date']: event.target.value }))}
-              >
-                <option key={selected.date} value={selected.date}>{selected.date}</option>
-                {availability.map((item) => <option key={item} value={moment(item).format('DD-MM-YYYY')}>{moment(item).format('DD-MM-YYYY')}</option>)}
-              </Select>
+              {role !== 'doctor' ? selected.date :
+                <Select value={selected.date}
+                  onChange={(event) => setSelected((prv) => ({ ...prv, ['date']: event.target.value }))}
+                >
+                  <option key={selected.date} value={selected.date}>{selected.date}</option>
+                  {availability.map((item) => <option key={item} value={moment(item).format('DD-MM-YYYY')}>{moment(item).format('DD-MM-YYYY')}</option>)}
+                </Select>
+              }
             </span>
           </div>
 
@@ -164,12 +167,12 @@ const AppointmentDetails = ({ setModalVisible, currentItem }: ChildComponentProp
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleClose}>
+          <Button colorScheme={role === 'admin' ? 'blue' : 'red'} mr={3} onClick={handleClose}>
             Close
           </Button>
-          <Button onClick={() => updateItem(currentItem)} colorScheme="green">
+          {role === 'admin' && <Button onClick={() => updateItem(currentItem)} colorScheme="green">
             Update
-          </Button>
+          </Button>}
         </ModalFooter>
       </ModalContent>
     </div>

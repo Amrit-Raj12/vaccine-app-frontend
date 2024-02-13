@@ -1,29 +1,45 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import Cookies from 'js-cookie';
+import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { setUserState } from "@/redux/userSlice";
+import authService from "@/services/authService";
+import { setAvailabilityState } from "@/redux/availabilitySlice";
+import { useRouter } from "next/router";
 
-interface RootState {
-  userStore: {
-    mainUser: {
-      token: {
-        accessToken: string
-      }
-    };
-  };
-}
 
 const Header = () => {
   const [show, setShow] = useState<Boolean>();
   const [profile, setProfile] = useState<Boolean>(false);
+  const dispatch = useDispatch();
+  const user = Cookies.get('id');
+  const router = useRouter();
 
   const getAccessToken = () => {
     return Cookies.get('accessToken');
   };
 
 
+  const handleLogOut = async () => {
+    try {
+      await authService.logout(user as string);
+      Cookies.remove('accessToken');
+      Cookies.remove('refreshToken');
+      Cookies.remove('id');
+      dispatch(setUserState({}));
+      dispatch(setAvailabilityState({}));
+      router.push('/');
+    } catch (error) {
+      console.log(error);
+    }
+
+  };
+
+
   return (
     <>
-      <div className="bg-green-800 h-full w-full">
+      <div className="bg-green-800 h-full w-full z-50">
         <nav className="bg-green shadow xl:block hidden">
           <div className="mx-auto container px-6 py-2 xl:py-0">
             <div className="flex items-center justify-between">
@@ -71,7 +87,7 @@ const Header = () => {
                             <path stroke="none" d="M0 0h24v24H0z" />
                             <path d="M4 7h3a1 1 0 0 0 1 -1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 0 1 0 4h-1a1 1 0 0 0 -1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-1a2 2 0 0 0 -4 0v1a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h1a2 2 0 0 0 0 -4h-1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1" />
                           </svg>
-                          <span className="ml-2 font-bold">Products</span>
+                          <span className="ml-2 font-bold">Vaccines</span>
                         </div>
                       </li>
                       <li className="flex xl:hidden cursor-pointer text-white text-sm leading-3 tracking-normal py-2 hover:text-green-700 flex items-center focus:text-green-700 focus:outline-none">
@@ -115,16 +131,6 @@ const Header = () => {
                       </li>
                       <li className="cursor-pointer text-white text-sm leading-3 tracking-normal mt-2 py-2 hover:text-green-700 flex items-center focus:text-green-700 focus:outline-none">
                         <div className="flex items-center">
-                          <div className="w-12 cursor-pointer flex text-sm border-2 border-transparent rounded focus:outline-none focus:border-white transition duration-150 ease-in-out">
-                            <img
-                              className="rounded h-10 w-10 object-cover"
-                              src="https://tuk-cdn.s3.amazonaws.com/assets/components/horizontal_navigation/hn_1.png"
-                              alt="logo"
-                            />
-                          </div>
-                          <p className="text-sm ml-2 cursor-pointer">
-                            Jane Doe
-                          </p>
                           <div className="sm:ml-2 text-white relative">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -376,13 +382,13 @@ const Header = () => {
                       </button>
                     </div>
                   </form>
-                  <div className={!getAccessToken() ? "hidden":"ml-6 relative"}>
+                  <div className={!getAccessToken() ? "hidden" : "ml-6 relative"}>
                     <div
                       className="flex items-center relative"
                       onClick={() => setProfile(!profile)}
                     >
-                      {profile && (
-                        <ul className="p-2 w-40 border-r bg-white absolute rounded right-0 shadow top-0 mt-16 ">
+                      {profile && user && (
+                        <ul onClick={handleLogOut} className="p-2 w-40 border-r bg-white absolute rounded right-0 shadow top-0 mt-16 ">
                           <li className="cursor-pointer text-green-500 text-sm hover:bg-green-800 leading-3 tracking-normal py-2 hover:text-white focus:text-white focus:outline-none">
                             <div className="flex items-center">
                               <svg
@@ -427,7 +433,7 @@ const Header = () => {
                             </svg>
                             <span className="ml-2">Help Center</span>
                           </li>
-                          <li
+                          {/* <li
                             className="cursor-pointer text-green-500 text-sm leading-3 tracking-normal mt-2 py-2 hover:text-white flex items-center 
                           hover:bg-green-800 focus:text-white focus:outline-none"
                           >
@@ -448,7 +454,7 @@ const Header = () => {
                               <circle cx={12} cy={12} r={3} />
                             </svg>
                             <span className="ml-2">Account Settings</span>
-                          </li>
+                          </li> */}
                           <li
                             className="cursor-pointer text-green-500 text-sm leading-3 tracking-normal mt-2 py-2 
                           hover:bg-green-800 hover:text-white focus:text-white focus:outline-none flex items-center"
@@ -471,13 +477,15 @@ const Header = () => {
                               <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
                             </svg>
                             <span className="ml-2">
-                              <Link href="/auth/login">Logout</Link>
+                              <Link href=''>Logout</Link>
                             </span>
                           </li>
                         </ul>
                       )}
                       <div className="cursor-pointer flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-white transition duration-150 ease-in-out">
-                        <img
+                        <Image
+                          width={10}
+                          height={10}
                           className="rounded-full h-10 w-10 object-cover"
                           src="https://tuk-cdn.s3.amazonaws.com/assets/components/horizontal_navigation/hn_2.png"
                           alt="logo"

@@ -40,19 +40,19 @@ const columns = [
     header: () => <span>Name</span>,
   }),
   columnHelper.accessor('status', {
-    header: () => 'Status',
+    header: () => 'Contact',
     cell: info => info.renderValue() == 'pending' ? 'Pending' : "Completed",
   }),
-  columnHelper.accessor('vaccine', {
+  columnHelper.accessor('status', {
     header: () => <span>Vaccine</span>,
   }),
   columnHelper.accessor('date', {
-    header: 'Appointment Date',
+    header: 'User role',
     cell: props => <h5 className='mr-2'>{moment(props.renderValue()).format('DD-MM-YYYY')}</h5>
   }),
 ]
 
-function Table({ data, pagination, setPagination, links }: tablePropType) {
+function UserTable({ data, pagination, setPagination, links }: tablePropType) {
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
   const [modalVisible, setModalVisible] = useState({ view: false, delete: false, edit: false });
   const [currentItem, setCurrentItem] = useState('');
@@ -173,7 +173,7 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
                 </MenuButton>
 
                 <MenuList>
-                  <MenuItem onClick={() => handleUpdate(row.original)}> View </MenuItem>       
+                  <MenuItem onClick={() => handleUpdate(row.original)}> View </MenuItem>
                   {['user', 'admin'].includes(role) && <MenuItem isDisabled={row.original.status === 'complete' || isDisabled(row.original)} onClick={() => handleDelete(row.original)}>Delete</MenuItem>}
                   {role === 'user' && <MenuItem isDisabled={row.original.status === 'pending'}>Add Review</MenuItem>}
 
@@ -238,4 +238,4 @@ function Table({ data, pagination, setPagination, links }: tablePropType) {
     </div>
   )
 }
-export default Table;
+export default UserTable;

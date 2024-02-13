@@ -13,6 +13,9 @@ class AuthService {
   login(payload: formDataLogin) {
     return requests.post("/auth/login", payload);
   }
+  logout(id: string){
+    return requests.delete(`/auth/logout?id=${id}`);
+  }
 };
 
 export default new AuthService();

@@ -1,11 +1,15 @@
+import { IRootState } from "@/redux/store";
 import Link from "next/link";
 import React from "react";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
 
+  const { role } = useSelector((state: IRootState)=> state.userStore.mainUser);
+
   // sideBarMenuItems
   const asideMenu = [
-    {
+  {
       key: 'availability',
       name: 'Availability',
       icon: (<svg
@@ -22,10 +26,8 @@ const Sidebar = () => {
       </svg>
       ),
       href: '/',
-      chipName: 'Pro'
-    },
-
-    {
+  },
+  {
     key:'appointment',
     name: 'Appointment',
     icon: (<svg
@@ -42,7 +44,6 @@ const Sidebar = () => {
   </svg>),
   href:'/appointment',
   },
- 
   {
     key:'in1b',
     name: 'Inbox',
@@ -57,7 +58,7 @@ const Sidebar = () => {
     </svg>
     ),
     href:'#',
-    chipName:'3'
+
   },
   {
     key:'us1b',
@@ -72,7 +73,7 @@ const Sidebar = () => {
       <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
     </svg>
     ),
-    href:'#',
+    href:'/users',
   },
   {
     key:'pr1b',
@@ -100,16 +101,13 @@ const Sidebar = () => {
       <div className="h-full px-3 py-4 overflow-y-auto bg-green-700">
         <ul className="space-y-2 font-medium">
           {asideMenu.map((item) => (
-            <li key={item.key}>
+            role==='admin' && <li key={item.key}>
             <Link
               href={item.href}
               className="flex items-center p-2 text-green-900 rounded-lg dark:text-white hover:bg-green-100 dark:hover:bg-green-900 group"
             >
               {item.icon}
               <span className="flex-1 ms-3 whitespace-nowrap">{item.name}</span>
-              <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-green-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-green-300">
-                {item.chipName}
-              </span>
             </Link>
           </li>
           ))}
